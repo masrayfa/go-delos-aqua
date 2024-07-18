@@ -11,7 +11,7 @@ type PondsControllerImpl struct {
 	pondsService service.PondsService
 }
 
-func NewPondsControllerImpl(pondsService service.PondsService) PondsController {
+func NewPondsController(pondsService service.PondsService) PondsController {
 	return &PondsControllerImpl{
 		pondsService: pondsService,
 	}

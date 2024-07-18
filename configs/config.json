@@ -13,20 +13,5 @@
   },
   "jwt": {
     "secretKey": "b=(^.t6J.#LX3y~h*5u=Kk2uPRi2krHBOyD.IQ:Wd`|q0`y(?SL}`V#2$6r#wp@"
-  },
-  "mail": {
-    "smtpHost": "smtp.gmail.com",
-    "smtpPort": 587,
-    "senderName": "rayfamas20@gmail.com",
-    "authenticationMail": "rayfamas20@gmail.com",
-    "authenticationPassword": "pvxj xfik meej jlyr"
-  },
-  "account": {
-    "adminEmail": "admin@example.com",
-    "adminUsername": "admin",
-    "adminPassword": "admin",
-    "userEmail": "user@example.com",
-    "userUsername": "user",
-    "userPassword": "user"
   }
 }

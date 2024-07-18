@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -24,7 +25,30 @@ func (uc *UserControllerImpl) FindAll(writer http.ResponseWriter, request *http.
 
 	user, err := uc.userService.FindAll(request.Context())
 	if err != nil {
-		helper.WriteToResponseBody(writer, err.Error())
+		var statusCode int
+
+		switch {
+			case errors.Is(err, helper.ErrNotFound):
+				statusCode = http.StatusNotFound
+			case errors.Is(err, helper.ErrBadRequest):
+				statusCode = http.StatusBadRequest
+			case errors.Is(err, helper.ErrUnathorized):
+				statusCode = http.StatusUnauthorized
+			case errors.Is(err, helper.ErrForbidden):
+				statusCode = http.StatusForbidden
+			case errors.Is(err, helper.ErrConflict):
+				statusCode = http.StatusConflict
+			default:
+				statusCode = http.StatusInternalServerError
+
+		}
+
+		webResponse := web.Response{
+			Code:    statusCode,
+			Message: http.StatusText(statusCode),
+		}
+
+		helper.WriteToResponseBody(writer, webResponse)
 		return
 	}
 
@@ -47,7 +71,29 @@ func (uc *UserControllerImpl) FindById(writer http.ResponseWriter, request *http
 
 	user, err := uc.userService.FindById(request.Context(), UserId)
 	if err != nil {
-		helper.WriteToResponseBody(writer, err.Error())
+		var statusCode int
+
+		switch {
+			case errors.Is(err, helper.ErrNotFound):
+				statusCode = http.StatusNotFound
+			case errors.Is(err, helper.ErrBadRequest):
+				statusCode = http.StatusBadRequest
+			case errors.Is(err, helper.ErrUnathorized):
+				statusCode = http.StatusUnauthorized
+			case errors.Is(err, helper.ErrForbidden):
+				statusCode = http.StatusForbidden
+			case errors.Is(err, helper.ErrConflict):
+				statusCode = http.StatusConflict
+			default:
+				statusCode = http.StatusInternalServerError
+		}
+
+		webResponse := web.Response{
+			Code:    statusCode,
+			Message: http.StatusText(statusCode),
+		}
+
+		helper.WriteToResponseBody(writer, webResponse)
 		return
 	}
 
@@ -66,7 +112,29 @@ func (uc *UserControllerImpl) Create(writer http.ResponseWriter, request *http.R
 
 	_, err := uc.userService.Create(request.Context(), userCreateReq)
 	if err != nil {
-		helper.WriteToResponseBody(writer, err.Error())
+		var statusCode int
+
+		switch {
+			case errors.Is(err, helper.ErrNotFound):
+				statusCode = http.StatusNotFound
+			case errors.Is(err, helper.ErrBadRequest):
+				statusCode = http.StatusBadRequest
+			case errors.Is(err, helper.ErrUnathorized):
+				statusCode = http.StatusUnauthorized
+			case errors.Is(err, helper.ErrForbidden):
+				statusCode = http.StatusForbidden
+			case errors.Is(err, helper.ErrConflict):
+				statusCode = http.StatusConflict
+			default:
+				statusCode = http.StatusInternalServerError
+		}
+
+		webResponse := web.Response{
+			Code:    statusCode,
+			Message: http.StatusText(statusCode),
+		}
+
+		helper.WriteToResponseBody(writer, webResponse)
 		return
 	}
 
@@ -84,7 +152,29 @@ func (uc *UserControllerImpl) Update(writer http.ResponseWriter, request *http.R
 
 	_, err := uc.userService.Update(request.Context(), userUpdateReq)
 	if err != nil {
-		helper.WriteToResponseBody(writer, err.Error())
+		var statusCode int
+
+		switch {
+			case errors.Is(err, helper.ErrNotFound):
+				statusCode = http.StatusNotFound
+			case errors.Is(err, helper.ErrBadRequest):
+				statusCode = http.StatusBadRequest
+			case errors.Is(err, helper.ErrUnathorized):
+				statusCode = http.StatusUnauthorized
+			case errors.Is(err, helper.ErrForbidden):
+				statusCode = http.StatusForbidden
+			case errors.Is(err, helper.ErrConflict):
+				statusCode = http.StatusConflict
+			default:
+				statusCode = http.StatusInternalServerError
+		}
+
+		webResponse := web.Response{
+			Code:    statusCode,
+			Message: err.Error(),
+		}
+
+		helper.WriteToResponseBody(writer, webResponse)
 		return
 	}
 
@@ -106,7 +196,29 @@ func (uc *UserControllerImpl) Delete(writer http.ResponseWriter, request *http.R
 
 	err = uc.userService.Delete(request.Context(), UserId)
 	if err != nil {
-		helper.WriteToResponseBody(writer, err.Error())
+		var statusCode int
+
+		switch {
+			case errors.Is(err, helper.ErrNotFound):
+				statusCode = http.StatusNotFound
+			case errors.Is(err, helper.ErrBadRequest):
+				statusCode = http.StatusBadRequest
+			case errors.Is(err, helper.ErrUnathorized):
+				statusCode = http.StatusUnauthorized
+			case errors.Is(err, helper.ErrForbidden):
+				statusCode = http.StatusForbidden
+			case errors.Is(err, helper.ErrConflict):
+				statusCode = http.StatusConflict
+			default:
+				statusCode = http.StatusInternalServerError
+		}
+
+		webResponse := web.Response{
+			Code:    statusCode,
+			Message: http.StatusText(statusCode),
+		}
+
+		helper.WriteToResponseBody(writer, webResponse)
 		return
 	}
 

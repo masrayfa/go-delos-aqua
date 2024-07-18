@@ -10,7 +10,7 @@ import (
 type FarmRepositoryImpl struct {
 }
 
-func NewFarmRepositoryImpl() FarmRepository {
+func NewFarmRepository() FarmRepository {
 	return &FarmRepositoryImpl{}
 }
 

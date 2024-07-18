@@ -15,7 +15,7 @@ type FarmControllerImpl struct {
 	farmService service.FarmService
 }
 
-func NewFarmControllerImpl(farmService service.FarmService) FarmController {
+func NewFarmController(farmService service.FarmService) FarmController {
 	return &FarmControllerImpl{
 		farmService: farmService,
 	}
@@ -25,7 +25,12 @@ func (controller *FarmControllerImpl) FindAll(writer http.ResponseWriter, reques
 
 	farm, err := controller.farmService.FindAll(request.Context())
 	if err != nil {
-		helper.WriteToResponseBody(writer, err.Error())
+		webResponse := web.Response{
+			Code:    http.StatusInternalServerError,
+			Message: err.Error(),
+		}
+
+		helper.WriteToResponseBody(writer, webResponse)
 		return
 	}
 

@@ -10,7 +10,7 @@ import (
 type PondsRepositoryImpl struct {
 }
 
-func NewPondsRepositoryImpl() PondsRepository {
+func NewPondsRepository() PondsRepository {
 	return &PondsRepositoryImpl{}
 }
 
