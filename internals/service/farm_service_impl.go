@@ -33,7 +33,6 @@ func (fs *FarmServiceImpl) FindAll(ctx context.Context) ([]web.FarmRead, error) 
 			FarmId: farm.FarmId,
 			Name: farm.Name,
 			Location: farm.Location,
-			Owner: farm.Owner,
 		})
 	}
 
@@ -50,7 +49,6 @@ func (fs *FarmServiceImpl) FindById(ctx context.Context, id int) (web.FarmRead, 
 		FarmId: farm.FarmId,
 		Name: farm.Name,
 		Location: farm.Location,
-		Owner: farm.Owner,
 	}
 
 	return farmRead, nil
@@ -60,7 +58,6 @@ func (fs *FarmServiceImpl) Create(ctx context.Context, payload web.FarmRequest) 
 	farmDomain := domain.Farm{
 		Name: payload.Name,
 		Location: payload.Location,
-		Owner: payload.Owner,
 	}
 
 	farm, err := fs.farmRepository.Create(ctx, fs.db, farmDomain)
@@ -72,7 +69,6 @@ func (fs *FarmServiceImpl) Create(ctx context.Context, payload web.FarmRequest) 
 		FarmId: farm.FarmId,
 		Name: farm.Name,
 		Location: farm.Location,
-		Owner: farm.Owner,
 	}
 
 	return farmRead, nil
@@ -82,7 +78,6 @@ func (fs *FarmServiceImpl) Update(ctx context.Context, payload web.FarmRequest) 
 	farmDomain := domain.Farm{
 		Name: payload.Name,
 		Location: payload.Location,
-		Owner: payload.Owner,
 	}
 
 	farm, err := fs.farmRepository.Update(ctx, fs.db, farmDomain)
@@ -94,7 +89,6 @@ func (fs *FarmServiceImpl) Update(ctx context.Context, payload web.FarmRequest) 
 		FarmId: farm.FarmId,
 		Name: farm.Name,
 		Location: farm.Location,
-		Owner: farm.Owner,
 	}
 
 	return farmRead, nil

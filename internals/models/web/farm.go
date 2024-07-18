@@ -4,18 +4,15 @@ type FarmRead struct {
 	FarmId   int    `json:"farm_id"`
 	Name     string `json:"name"`
 	Location string `json:"location"`
-	Owner    string `json:"owner"`
 }
 
 type FarmRequest struct {
 	Name     string `json:"name"`
 	Location string `json:"location"`
-	Owner    string `json:"owner"`
 }
 
 type FarmResponse struct {
 	FarmId   int    `json:"farm_id"`
 	Name     string `json:"name"`
 	Location string `json:"location"`
-	Owner    string `json:"owner"`
 }

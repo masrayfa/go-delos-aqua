@@ -32,7 +32,6 @@ func (ps *PondsServiceImpl) FindAll(ctx context.Context) ([]web.PondResponse, er
 		pondRes = append(pondRes, web.PondResponse{
 			PondId: pond.PondId,
 			Name: pond.Name,
-			Owner: pond.Owner,
 		})
 	}
 
@@ -48,7 +47,6 @@ func (ps *PondsServiceImpl) FindById(ctx context.Context, id int) (web.PondRespo
 	pondRes := web.PondResponse{
 		PondId: pond.PondId,
 		Name: pond.Name,
-		Owner: pond.Owner,
 	}
 
 	return pondRes, nil
@@ -57,7 +55,6 @@ func (ps *PondsServiceImpl) FindById(ctx context.Context, id int) (web.PondRespo
 func (ps *PondsServiceImpl) Create(ctx context.Context, payload web.PondRequest) (web.PondResponse, error) {
 	pondDomain := domain.Pond{
 		Name: payload.Name,
-		Owner: payload.Owner,
 	}
 
 	pond, err := ps.pondsRepository.Create(ctx, ps.db, pondDomain)
@@ -68,7 +65,6 @@ func (ps *PondsServiceImpl) Create(ctx context.Context, payload web.PondRequest)
 	pondRes := web.PondResponse{
 		PondId: pond.PondId,
 		Name: pond.Name,
-		Owner: pond.Owner,
 	}
 
 	return pondRes, nil
@@ -78,7 +74,6 @@ func (ps *PondsServiceImpl) Update(ctx context.Context, payload web.PondRequest,
 	pondDomain := domain.Pond{
 		PondId: id,
 		Name: payload.Name,
-		Owner: payload.Owner,
 	}
 
 	pond, err := ps.pondsRepository.Update(ctx, ps.db, pondDomain)
@@ -89,7 +84,6 @@ func (ps *PondsServiceImpl) Update(ctx context.Context, payload web.PondRequest,
 	pondRes := web.PondResponse{
 		PondId: pond.PondId,
 		Name: pond.Name,
-		Owner: pond.Owner,
 	}
 
 	return pondRes, nil
