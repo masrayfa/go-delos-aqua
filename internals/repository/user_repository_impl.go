@@ -90,32 +90,42 @@ func (ur *UserRepositoryImpl) Create(ctx context.Context, dbpool *pgxpool.Pool, 
 	return user, nil
 }
 
-func (ur *UserRepositoryImpl) Update(ctx context.Context, dbpool *pgxpool.Pool, user domain.User) (domain.User, error) {
+func (ur *UserRepositoryImpl) Update(ctx context.Context, dbpool *pgxpool.Pool, user domain.User, id int) (domain.User, error) {
+	log.Println("@UserRepositoryImpl.Update:start")
+
 	tx, err := dbpool.Begin(ctx)
 	if err != nil {
+		log.Println("@UserRepositoryImpl.Update:error: ", err)
 		return domain.User{}, err
 	}
 	defer helper.CommitOrRollback(ctx, tx)
 
-	_, err = tx.Exec(ctx, "UPDATE users SET email = $1, username = $2 WHERE user_id = $3 AND deleted_at IS NULL", user.Email, user.Username, user.UserId)
+	_, err = tx.Exec(ctx, "UPDATE users SET email = $1, username = $2 WHERE user_id = $3 AND deleted_at IS NULL", user.Email, user.Username, id) 
 	if err != nil {
+		log.Println("@UserRepositoryImpl.Update:error: ", err)
 		return domain.User{}, err
 	}
 
+	log.Println("@UserRepositoryImpl.Update:succeed")
 	return user, nil
 }
 
 func (ur *UserRepositoryImpl) Delete(ctx context.Context, dbpool *pgxpool.Pool, id int) error {
+	log.Println("@UserRepositoryImpl.Delete:start")
+
 	tx, err := dbpool.Begin(ctx)
 	if err != nil {
+		log.Println("@UserRepositoryImpl.Delete:error: ", err)
 		return err
 	}
 	defer helper.CommitOrRollback(ctx, tx)
 
 	_, err = tx.Exec(ctx, "UPDATE users SET deleted_at = CURRENT_TIMESTAMP WHERE user_id = $1", id)
 	if err != nil {
+		log.Println("@UserRepositoryImpl.Delete:error: ", err)
 		return err
 	}
 
+	log.Println("@UserRepositoryImpl.Delete:succeed")
 	return nil
 }

@@ -52,7 +52,7 @@ func (ps *PondsServiceImpl) FindById(ctx context.Context, id int) (web.PondRespo
 	return pondRes, nil
 }
 
-func (ps *PondsServiceImpl) Create(ctx context.Context, payload web.PondRequest) (web.PondResponse, error) {
+func (ps *PondsServiceImpl) Create(ctx context.Context, payload web.PondCreateRequest) (web.PondResponse, error) {
 	pondDomain := domain.Pond{
 		Name: payload.Name,
 	}
@@ -70,7 +70,7 @@ func (ps *PondsServiceImpl) Create(ctx context.Context, payload web.PondRequest)
 	return pondRes, nil
 }
 
-func (ps *PondsServiceImpl) Update(ctx context.Context, payload web.PondRequest, id int) (web.PondResponse, error) {
+func (ps *PondsServiceImpl) Update(ctx context.Context, payload web.PondUpdateRequest, id int) (web.PondResponse, error) {
 	pondDomain := domain.Pond{
 		PondId: id,
 		Name: payload.Name,

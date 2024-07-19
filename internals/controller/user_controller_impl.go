@@ -2,6 +2,7 @@ package controller
 
 import (
 	"errors"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -22,7 +23,6 @@ func NewUserController(userService service.UserService) UserController {
 }
 
 func (uc *UserControllerImpl) FindAll(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-
 	user, err := uc.userService.FindAll(request.Context())
 	if err != nil {
 		var statusCode int
@@ -147,10 +147,41 @@ func (uc *UserControllerImpl) Create(writer http.ResponseWriter, request *http.R
 }
 
 func (uc *UserControllerImpl) Update(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	param := params.ByName("id")
+	userId, err := strconv.Atoi(param)
+	if err != nil {
+		log.Println("@UserControllerImpl.Update:error: ", err)
+
+		var statusCode int
+
+		switch {
+			case errors.Is(err, helper.ErrNotFound):
+				statusCode = http.StatusNotFound
+			case errors.Is(err, helper.ErrBadRequest):
+				statusCode = http.StatusBadRequest
+			case errors.Is(err, helper.ErrUnathorized):
+				statusCode = http.StatusUnauthorized
+			case errors.Is(err, helper.ErrForbidden):
+				statusCode = http.StatusForbidden
+			case errors.Is(err, helper.ErrConflict):
+				statusCode = http.StatusConflict
+			default:
+				statusCode = http.StatusInternalServerError
+		}
+
+		webResponse := web.Response{
+			Code:    statusCode,
+			Message: http.StatusText(statusCode),
+		}
+
+		helper.WriteToResponseBody(writer, webResponse)
+		return
+	}
+
 	userUpdateReq := web.UserUpdate{}
 	helper.ReadFromRequestBody(request, &userUpdateReq)
 
-	_, err := uc.userService.Update(request.Context(), userUpdateReq)
+	_, err = uc.userService.Update(request.Context(), userUpdateReq, userId)
 	if err != nil {
 		var statusCode int
 
@@ -171,7 +202,7 @@ func (uc *UserControllerImpl) Update(writer http.ResponseWriter, request *http.R
 
 		webResponse := web.Response{
 			Code:    statusCode,
-			Message: err.Error(),
+			Message: http.StatusText(statusCode),
 		}
 
 		helper.WriteToResponseBody(writer, webResponse)

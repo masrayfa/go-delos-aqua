@@ -6,7 +6,7 @@ type PondRead struct {
 	Owner  string `json:"owner"`
 }
 
-type PondRequest struct {
+type PondCreateRequest struct {
 	Name  string `json:"name"`
 	Owner string `json:"owner"`
 }

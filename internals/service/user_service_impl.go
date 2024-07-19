@@ -74,13 +74,13 @@ func (us *UserServiceImpl) Create(ctx context.Context, payload web.UserCreate) (
 	return userRead, nil
 }
 
-func (us *UserServiceImpl) Update(ctx context.Context, payload web.UserUpdate) (web.UserRead, error) {
+func (us *UserServiceImpl) Update(ctx context.Context, payload web.UserUpdate, id int) (web.UserRead, error) {
 	userDomain := domain.User{
 		Username: payload.Username,
 		Email:    payload.Email,
 	}
 
-	user, err := us.userRepository.Update(ctx, us.db, userDomain)
+	user, err := us.userRepository.Update(ctx, us.db, userDomain, id)
 	if err != nil {
 		return web.UserRead{}, err
 	}
