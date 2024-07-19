@@ -43,10 +43,10 @@ func main() {
 	mainRouter.appRouter.Handler("DELETE", "/api/v1/user/*path", http.StripPrefix("/api/v1/user", userRouter))
 
 	// farm router
-	mainRouter.appRouter.Handler("GET", "/api/v1/farm/*path", http.StripPrefix("/api/v1/farm", farmRouter))
-	mainRouter.appRouter.Handler("POST", "/api/v1/farm/*path", http.StripPrefix("/api/v1/farm", farmRouter))
-	mainRouter.appRouter.Handler("PUT", "/api/v1/farm/*path", http.StripPrefix("/api/v1/farm", farmRouter))
-	mainRouter.appRouter.Handler("DELETE", "/api/v1/farm/*path", http.StripPrefix("/api/v1/farm", farmRouter))
+	mainRouter.appRouter.Handler("GET", "/api/v1/farms/*path", http.StripPrefix("/api/v1/farms", farmRouter))
+	mainRouter.appRouter.Handler("POST", "/api/v1/farms/*path", http.StripPrefix("/api/v1/farms", farmRouter))
+	mainRouter.appRouter.Handler("PUT", "/api/v1/farms/*path", http.StripPrefix("/api/v1/farms", farmRouter))
+	mainRouter.appRouter.Handler("DELETE", "/api/v1/farms/*path", http.StripPrefix("/api/v1/farms", farmRouter))
 
 	// ponds router
 	mainRouter.appRouter.Handler("GET", "/api/v1/ponds/*path", http.StripPrefix("/api/v1/ponds", pondsRouter))

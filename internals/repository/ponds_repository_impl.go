@@ -76,7 +76,7 @@ func (p *PondsRepositoryImpl) Create(ctx context.Context, dbpool *pgxpool.Pool, 
 		return domain.Pond{}, err
 	}
 
-	err = tx.QueryRow(ctx, "INSERT INTO ponds (name, owner) VALUES ($1, $2) RETURNING pond_id", pond.Name).Scan(&pond.PondId)
+	err = tx.QueryRow(ctx, "INSERT INTO ponds (name) VALUES ($1) RETURNING pond_id", pond.Name).Scan(&pond.PondId)
 	if err != nil {
 		log.Println("@PondsRepositoryImpl.Create -> dbpool.QueryRow-error: ", err)
 		return domain.Pond{}, err

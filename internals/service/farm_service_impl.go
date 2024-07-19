@@ -31,6 +31,7 @@ func (fs *FarmServiceImpl) FindAll(ctx context.Context) ([]web.FarmRead, error) 
 	for _, farm := range farms {
 		farmReads = append(farmReads, web.FarmRead{
 			FarmId: farm.FarmId,
+			UserId: farm.UserId,
 			Name: farm.Name,
 			Location: farm.Location,
 		})
@@ -47,6 +48,7 @@ func (fs *FarmServiceImpl) FindById(ctx context.Context, id int) (web.FarmRead, 
 
 	farmRead := web.FarmRead{
 		FarmId: farm.FarmId,
+		UserId: farm.UserId,
 		Name: farm.Name,
 		Location: farm.Location,
 	}
@@ -56,6 +58,7 @@ func (fs *FarmServiceImpl) FindById(ctx context.Context, id int) (web.FarmRead, 
 
 func (fs *FarmServiceImpl) Create(ctx context.Context, payload web.FarmRequest) (web.FarmRead, error) {
 	farmDomain := domain.Farm{
+		UserId: payload.UserId,
 		Name: payload.Name,
 		Location: payload.Location,
 	}
@@ -87,6 +90,7 @@ func (fs *FarmServiceImpl) Update(ctx context.Context, payload web.FarmRequest) 
 
 	farmRead := web.FarmRead{
 		FarmId: farm.FarmId,
+		UserId: farm.UserId,
 		Name: farm.Name,
 		Location: farm.Location,
 	}
