@@ -1,23 +1,28 @@
 package web
 
+import "github.com/masrayfa/go-delos-aqua/internals/models/domain"
+
 type PondRead struct {
 	PondId int    `json:"poind_id"`
 	Name   string `json:"name"`
-	Owner  string `json:"owner"`
 }
 
 type PondCreateRequest struct {
 	Name  string `json:"name"`
-	Owner string `json:"owner"`
 }
 
 type PondUpdateRequest struct {
+	PondId int `json:"pond_id"`
 	Name  string `json:"name"`
-	Owner string `json:"owner"`
+}
+
+func (p *PondUpdateRequest) ChangeSettedField(pond *domain.Pond) {
+	if p.Name != "" {
+		pond.Name = p.Name
+	}
 }
 
 type PondResponse struct {
 	PondId int    `json:"poind_id"`
 	Name   string `json:"name"`
-	Owner  string `json:"owner"`
 }

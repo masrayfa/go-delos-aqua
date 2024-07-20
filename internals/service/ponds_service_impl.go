@@ -71,12 +71,20 @@ func (ps *PondsServiceImpl) Create(ctx context.Context, payload web.PondCreateRe
 }
 
 func (ps *PondsServiceImpl) Update(ctx context.Context, payload web.PondUpdateRequest, id int) (web.PondResponse, error) {
-	pondDomain := domain.Pond{
-		PondId: id,
-		Name: payload.Name,
-	}
+	// establish connection
+	dbPool := ps.db
 
-	pond, err := ps.pondsRepository.Update(ctx, ps.db, pondDomain)
+	pond, err := ps.pondsRepository.FindById(ctx, dbPool, id)
+	if err != nil {
+		return web.PondResponse{}, err
+	}
+	pondPayload := web.PondUpdateRequest{
+		PondId: pond.PondId,
+		Name: pond.Name,
+	}
+	pondPayload.ChangeSettedField(&pond)
+
+	pond, err = ps.pondsRepository.Update(ctx, ps.db, domain.Pond(pondPayload))
 	if err != nil {
 		return web.PondResponse{}, err
 	}
