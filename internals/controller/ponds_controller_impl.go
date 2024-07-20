@@ -2,6 +2,7 @@ package controller
 
 import (
 	"errors"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -22,125 +23,120 @@ func NewPondsController(pondsService service.PondsService) PondsController {
 }
 
 func (p *PondsControllerImpl) FindAll(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	log.Println("@PondsControllerImpl.FindAll")
+
 	ponds, err := p.pondsService.FindAll(request.Context())
 	if err != nil {
-			var statusCode int
-
-		switch {
-			case errors.Is(err, helper.ErrNotFound):
-				statusCode = http.StatusNotFound
-			case errors.Is(err, helper.ErrBadRequest):
-				statusCode = http.StatusBadRequest
-			case errors.Is(err, helper.ErrUnathorized):
-				statusCode = http.StatusUnauthorized
-			case errors.Is(err, helper.ErrForbidden):
-				statusCode = http.StatusForbidden
-			case errors.Is(err, helper.ErrConflict):
-				statusCode = http.StatusConflict
-			default:
-				statusCode = http.StatusInternalServerError
-			
-			webResponse := web.Response {
-				Code: statusCode,
-				Message: http.StatusText(statusCode),
-			}
-
-			helper.WriteToResponseBody(writer, webResponse)
-		}
-
-		webResponse := web.Response{
-			Code:    statusCode,
-			Message: http.StatusText(statusCode),
-			Data: ponds,
-		}
-
-		helper.WriteToResponseBody(writer, webResponse)	
-		return 
-	}
-}
-
-func (p *PondsControllerImpl) FindById(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	param := params.ByName("id")
-	UserId, err := strconv.Atoi(param)
-	if err != nil {
-		helper.WriteToResponseBody(writer, err.Error())
-		return
-	}
-
-	user, err := p.pondsService.FindById(request.Context(), UserId)
-	if err != nil {
 		var statusCode int
-
 		switch {
-			case errors.Is(err, helper.ErrNotFound):
-				statusCode = http.StatusNotFound
-			case errors.Is(err, helper.ErrBadRequest):
-				statusCode = http.StatusBadRequest
-			case errors.Is(err, helper.ErrUnathorized):
-				statusCode = http.StatusUnauthorized
-			case errors.Is(err, helper.ErrForbidden):
-				statusCode = http.StatusForbidden
-			case errors.Is(err, helper.ErrConflict):
-				statusCode = http.StatusConflict
-			default:
-				statusCode = http.StatusInternalServerError
+		case errors.Is(err, helper.ErrNotFound):
+			statusCode = http.StatusNotFound
+		case errors.Is(err, helper.ErrBadRequest):
+			statusCode = http.StatusBadRequest
+		case errors.Is(err, helper.ErrUnathorized):
+			statusCode = http.StatusUnauthorized
+		case errors.Is(err, helper.ErrForbidden):
+			statusCode = http.StatusForbidden
+		case errors.Is(err, helper.ErrConflict):
+			statusCode = http.StatusConflict
+		default:
+			statusCode = http.StatusInternalServerError
 		}
-
 		webResponse := web.Response{
 			Code:    statusCode,
 			Message: http.StatusText(statusCode),
 		}
-
 		helper.WriteToResponseBody(writer, webResponse)
 		return
 	}
 
 	webResponse := web.Response{
-		Code:   http.StatusOK,
-		Message: "Pond found",
-		Data:  user,
+		Code:    http.StatusOK,
+		Message: "Ponds retrieved successfully",
+		Data:    ponds,
+	}
+	log.Println("@PondsControllerImpl.FindAll: ponds", ponds)
+	helper.WriteToResponseBody(writer, webResponse)
+}
+
+func (p *PondsControllerImpl) FindById(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	param := params.ByName("id")
+	pondId, err := strconv.Atoi(param)
+	if err != nil {
+		webResponse := web.Response{
+			Code:    http.StatusBadRequest,
+			Message: "Invalid pond ID",
+		}
+		helper.WriteToResponseBody(writer, webResponse)
+		return
 	}
 
+	pond, err := p.pondsService.FindById(request.Context(), pondId)
+	if err != nil {
+		var statusCode int
+		switch {
+		case errors.Is(err, helper.ErrNotFound):
+			statusCode = http.StatusNotFound
+		case errors.Is(err, helper.ErrBadRequest):
+			statusCode = http.StatusBadRequest
+		case errors.Is(err, helper.ErrUnathorized):
+			statusCode = http.StatusUnauthorized
+		case errors.Is(err, helper.ErrForbidden):
+			statusCode = http.StatusForbidden
+		case errors.Is(err, helper.ErrConflict):
+			statusCode = http.StatusConflict
+		default:
+			statusCode = http.StatusInternalServerError
+		}
+		webResponse := web.Response{
+			Code:    statusCode,
+			Message: http.StatusText(statusCode),
+		}
+		helper.WriteToResponseBody(writer, webResponse)
+		return
+	}
+
+	webResponse := web.Response{
+		Code:    http.StatusOK,
+		Message: "Pond found",
+		Data:    pond,
+	}
 	helper.WriteToResponseBody(writer, webResponse)
 }
 
 func (p *PondsControllerImpl) Create(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	pondCreateReq := web.PondCreateRequest{}
+	var pondCreateReq web.PondCreateRequest
 	helper.ReadFromRequestBody(request, &pondCreateReq)
 
 	_, err := p.pondsService.Create(request.Context(), pondCreateReq)
 	if err != nil {
 		var statusCode int
-
 		switch {
-			case errors.Is(err, helper.ErrNotFound):
-				statusCode = http.StatusNotFound
-			case errors.Is(err, helper.ErrBadRequest):
-				statusCode = http.StatusBadRequest
-			case errors.Is(err, helper.ErrUnathorized):
-				statusCode = http.StatusUnauthorized
-			case errors.Is(err, helper.ErrForbidden):
-				statusCode = http.StatusForbidden
-			case errors.Is(err, helper.ErrConflict):
-				statusCode = http.StatusConflict
-			default:
-				statusCode = http.StatusInternalServerError
+		case errors.Is(err, helper.ErrNotFound):
+			statusCode = http.StatusNotFound
+		case errors.Is(err, helper.ErrBadRequest):
+			statusCode = http.StatusBadRequest
+		case errors.Is(err, helper.ErrUnathorized):
+			statusCode = http.StatusUnauthorized
+		case errors.Is(err, helper.ErrForbidden):
+			statusCode = http.StatusForbidden
+		case errors.Is(err, helper.ErrConflict):
+			statusCode = http.StatusConflict
+		default:
+			statusCode = http.StatusInternalServerError
 		}
-
 		webResponse := web.Response{
 			Code:    statusCode,
 			Message: http.StatusText(statusCode),
 		}
-
 		helper.WriteToResponseBody(writer, webResponse)
 		return
 	}
 
 	webResponse := web.Response{
-		Code:   http.StatusCreated,
+		Code:    http.StatusCreated,
 		Message: "Pond created successfully",
 	}
-
 	helper.WriteToResponseBody(writer, webResponse)
 }
 
@@ -148,68 +144,46 @@ func (p *PondsControllerImpl) Update(writer http.ResponseWriter, request *http.R
 	param := params.ByName("id")
 	pondId, err := strconv.Atoi(param)
 	if err != nil {
-				var statusCode int
-
-		switch {
-			case errors.Is(err, helper.ErrNotFound):
-				statusCode = http.StatusNotFound
-			case errors.Is(err, helper.ErrBadRequest):
-				statusCode = http.StatusBadRequest
-			case errors.Is(err, helper.ErrUnathorized):
-				statusCode = http.StatusUnauthorized
-			case errors.Is(err, helper.ErrForbidden):
-				statusCode = http.StatusForbidden
-			case errors.Is(err, helper.ErrConflict):
-				statusCode = http.StatusConflict
-			default:
-				statusCode = http.StatusInternalServerError
-		}
-
 		webResponse := web.Response{
-			Code:    statusCode,
-			Message: http.StatusText(statusCode),
+			Code:    http.StatusBadRequest,
+			Message: "Invalid pond ID",
 		}
-
 		helper.WriteToResponseBody(writer, webResponse)
 		return
 	}
 
-	pondUpdateReq := web.PondUpdateRequest{}
+	var pondUpdateReq web.PondUpdateRequest
 	helper.ReadFromRequestBody(request, &pondUpdateReq)
 
-	_, err = p.pondsService.Update(request.Context(), pondUpdateReq, pondId)
+	_, err = p.pondsService.Update(request.Context(), pondUpdateReq, pondId) 
 	if err != nil {
 		var statusCode int
-
 		switch {
-			case errors.Is(err, helper.ErrNotFound):
-				statusCode = http.StatusNotFound
-			case errors.Is(err, helper.ErrBadRequest):
-				statusCode = http.StatusBadRequest
-			case errors.Is(err, helper.ErrUnathorized):
-				statusCode = http.StatusUnauthorized
-			case errors.Is(err, helper.ErrForbidden):
-				statusCode = http.StatusForbidden
-			case errors.Is(err, helper.ErrConflict):
-				statusCode = http.StatusConflict
-			default:
-				statusCode = http.StatusInternalServerError
+		case errors.Is(err, helper.ErrNotFound):
+			statusCode = http.StatusNotFound
+		case errors.Is(err, helper.ErrBadRequest):
+			statusCode = http.StatusBadRequest
+		case errors.Is(err, helper.ErrUnathorized):
+			statusCode = http.StatusUnauthorized
+		case errors.Is(err, helper.ErrForbidden):
+			statusCode = http.StatusForbidden
+		case errors.Is(err, helper.ErrConflict):
+			statusCode = http.StatusConflict
+		default:
+			statusCode = http.StatusInternalServerError
 		}
-
 		webResponse := web.Response{
 			Code:    statusCode,
 			Message: http.StatusText(statusCode),
 		}
-
 		helper.WriteToResponseBody(writer, webResponse)
 		return
 	}
 
 	webResponse := web.Response{
-		Code:   http.StatusOK,
-		Message: "User updated successfully",
+		Code:    http.StatusOK,
+		Message: "Pond updated successfully",
 	}
-
 	helper.WriteToResponseBody(writer, webResponse)
 }
 
@@ -217,64 +191,41 @@ func (p *PondsControllerImpl) Delete(writer http.ResponseWriter, request *http.R
 	param := params.ByName("id")
 	pondId, err := strconv.Atoi(param)
 	if err != nil {
-				var statusCode int
-
-		switch {
-			case errors.Is(err, helper.ErrNotFound):
-				statusCode = http.StatusNotFound
-			case errors.Is(err, helper.ErrBadRequest):
-				statusCode = http.StatusBadRequest
-			case errors.Is(err, helper.ErrUnathorized):
-				statusCode = http.StatusUnauthorized
-			case errors.Is(err, helper.ErrForbidden):
-				statusCode = http.StatusForbidden
-			case errors.Is(err, helper.ErrConflict):
-				statusCode = http.StatusConflict
-			default:
-				statusCode = http.StatusInternalServerError
-		}
-
 		webResponse := web.Response{
-			Code:    statusCode,
-			Message: http.StatusText(statusCode),
+			Code:    http.StatusBadRequest,
+			Message: "Invalid pond ID",
 		}
-
 		helper.WriteToResponseBody(writer, webResponse)
 		return
 	}
 
-	err = p.pondsService.Delete(request.Context(), pondId)
-	if err != nil {
+	if err := p.pondsService.Delete(request.Context(), pondId); err != nil {
 		var statusCode int
-
 		switch {
-			case errors.Is(err, helper.ErrNotFound):
-				statusCode = http.StatusNotFound
-			case errors.Is(err, helper.ErrBadRequest):
-				statusCode = http.StatusBadRequest
-			case errors.Is(err, helper.ErrUnathorized):
-				statusCode = http.StatusUnauthorized
-			case errors.Is(err, helper.ErrForbidden):
-				statusCode = http.StatusForbidden
-			case errors.Is(err, helper.ErrConflict):
-				statusCode = http.StatusConflict
-			default:
-				statusCode = http.StatusInternalServerError
+		case errors.Is(err, helper.ErrNotFound):
+			statusCode = http.StatusNotFound
+		case errors.Is(err, helper.ErrBadRequest):
+			statusCode = http.StatusBadRequest
+		case errors.Is(err, helper.ErrUnathorized):
+			statusCode = http.StatusUnauthorized
+		case errors.Is(err, helper.ErrForbidden):
+			statusCode = http.StatusForbidden
+		case errors.Is(err, helper.ErrConflict):
+			statusCode = http.StatusConflict
+		default:
+			statusCode = http.StatusInternalServerError
 		}
-
 		webResponse := web.Response{
 			Code:    statusCode,
 			Message: http.StatusText(statusCode),
 		}
-
 		helper.WriteToResponseBody(writer, webResponse)
 		return
 	}
 
 	webResponse := web.Response{
-		Code:   http.StatusOK,
+		Code:    http.StatusOK,
 		Message: "Pond deleted successfully",
 	}
-
 	helper.WriteToResponseBody(writer, webResponse)
 }

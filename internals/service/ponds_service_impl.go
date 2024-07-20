@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"log"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/masrayfa/go-delos-aqua/internals/models/domain"
@@ -22,6 +23,8 @@ func NewPondsService(pondsRepository repository.PondsRepository, db *pgxpool.Poo
 }
 
 func (ps *PondsServiceImpl) FindAll(ctx context.Context) ([]web.PondResponse, error) {
+	log.Println("@PondsServiceImpl.FindAll:start")
+
 	ponds, err := ps.pondsRepository.FindAll(ctx, ps.db)
 	if err != nil {
 		return nil, err
@@ -35,6 +38,8 @@ func (ps *PondsServiceImpl) FindAll(ctx context.Context) ([]web.PondResponse, er
 		})
 	}
 
+	log.Println("@PondsServiceImpl.FindAll:ponds", pondRes)
+	log.Println("@PondsServiceImpl.FindAll:succeed")
 	return pondRes, nil
 }
 
