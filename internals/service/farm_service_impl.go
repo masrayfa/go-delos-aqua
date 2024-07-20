@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/masrayfa/go-delos-aqua/internals/helper"
 	"github.com/masrayfa/go-delos-aqua/internals/models/domain"
 	"github.com/masrayfa/go-delos-aqua/internals/models/web"
 	"github.com/masrayfa/go-delos-aqua/internals/repository"
@@ -25,6 +26,10 @@ func (fs *FarmServiceImpl) FindAll(ctx context.Context) ([]web.FarmRead, error) 
 	farms, err := fs.farmRepository.FindAll(ctx, fs.db)
 	if err != nil {
 		return nil, err
+	}
+
+	if len(farms) == 0 {
+		return nil, helper.ErrNotFound
 	}
 
 	var farmReads []web.FarmRead

@@ -3,6 +3,7 @@ package controller
 import (
 	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -23,6 +24,8 @@ func NewFarmController(farmService service.FarmService) FarmController {
 }
 
 func (controller *FarmControllerImpl) FindAll(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	log.Println("@FarmControllerImpl.FindAll")
+
 	farm, err := controller.farmService.FindAll(request.Context())
 	if err != nil {
 		var statusCode int

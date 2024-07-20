@@ -19,7 +19,6 @@ var (
 
 	// ErrBadRequest will throw if the request is invalid
 	ErrBadRequest = errors.New("bad request")
-
 )
 
 func PanicIfError(err error) {
