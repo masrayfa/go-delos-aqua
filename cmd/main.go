@@ -45,10 +45,10 @@ func main() {
 	stats := middleware.NewStats()
 
 	// user router
-	mainRouter.appRouter.Handler("GET", "/api/v1/user/*path", helper.StoreOriginalPath(http.StripPrefix("/api/v1/users", stats.Middleware(userRouter))))
-	mainRouter.appRouter.Handler("POST", "/api/v1/user/*path", helper.StoreOriginalPath(http.StripPrefix("/api/v1/users", stats.Middleware(userRouter))))
-	mainRouter.appRouter.Handler("PUT", "/api/v1/user/*path", helper.StoreOriginalPath(http.StripPrefix("/api/v1/users", stats.Middleware(userRouter))))
-	mainRouter.appRouter.Handler("DELETE", "/api/v1/user/*path", helper.StoreOriginalPath(http.StripPrefix("/api/v1/users", stats.Middleware(userRouter))))
+	mainRouter.appRouter.Handler("GET", "/api/v1/users/*path", helper.StoreOriginalPath(http.StripPrefix("/api/v1/users", stats.Middleware(userRouter))))
+	mainRouter.appRouter.Handler("POST", "/api/v1/users/*path", helper.StoreOriginalPath(http.StripPrefix("/api/v1/users", stats.Middleware(userRouter))))
+	mainRouter.appRouter.Handler("PUT", "/api/v1/users/*path", helper.StoreOriginalPath(http.StripPrefix("/api/v1/users", stats.Middleware(userRouter))))
+	mainRouter.appRouter.Handler("DELETE", "/api/v1/users/*path", helper.StoreOriginalPath(http.StripPrefix("/api/v1/users", stats.Middleware(userRouter))))
 
 	// farm router
 	mainRouter.appRouter.Handler("GET", "/api/v1/farms/*path", helper.StoreOriginalPath(http.StripPrefix("/api/v1/farms", stats.Middleware(farmRouter))))
