@@ -8,7 +8,7 @@
   "database": {
     "username": "postgres",
     "password": "root4",
-    "host": "localhost",
+    "host": "db",
     "name": "delos"
   },
   "jwt": {

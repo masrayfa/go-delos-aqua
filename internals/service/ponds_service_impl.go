@@ -37,6 +37,7 @@ func (ps *PondsServiceImpl) FindAll(ctx context.Context) ([]web.PondResponse, er
 	for _, pond := range ponds {
 		pondRes = append(pondRes, web.PondResponse{
 			PondId: pond.PondId,
+			FarmId: pond.FarmId,
 			Name: pond.Name,
 		})
 	}
@@ -68,6 +69,7 @@ func (ps *PondsServiceImpl) Create(ctx context.Context, payload web.PondCreateRe
 
 	pondDomain := domain.Pond{
 		Name: payload.Name,
+		FarmId: payload.FarmId,
 	}
 
 	pond, err := ps.pondsRepository.Create(ctx, ps.db, pondDomain)
@@ -98,12 +100,15 @@ func (ps *PondsServiceImpl) Update(ctx context.Context, payload web.PondUpdateRe
 	if err != nil {
 		return web.PondResponse{}, err
 	}
+
 	pondPayload := web.PondUpdateRequest{
-		PondId: pond.PondId,
-		Name: pond.Name,
+		PondId: payload.PondId,
+		FarmId: payload.FarmId,
+		Name: payload.Name,
 	}
 	pondPayload.ChangeSettedField(&pond)
 
+	log.Println("@PondsServiceImpl.Update:pondPayload", pondPayload)
 	pond, err = ps.pondsRepository.Update(ctx, ps.db, domain.Pond(pondPayload))
 	if err != nil {
 		return web.PondResponse{}, err
