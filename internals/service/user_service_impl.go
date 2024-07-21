@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/masrayfa/go-delos-aqua/internals/dependencies"
 	"github.com/masrayfa/go-delos-aqua/internals/models/domain"
 	"github.com/masrayfa/go-delos-aqua/internals/models/web"
 	"github.com/masrayfa/go-delos-aqua/internals/repository"
@@ -12,12 +13,14 @@ import (
 type UserServiceImpl struct {
 	userRepository repository.UserRepository
 	db             *pgxpool.Pool
+	validate 	 *dependencies.Validator
 }
 
-func NewUserService(userRepository repository.UserRepository, db *pgxpool.Pool) UserService {
+func NewUserService(userRepository repository.UserRepository, db *pgxpool.Pool, validate *dependencies.Validator) UserService {
 	return &UserServiceImpl{
 		userRepository: userRepository,
 		db:             db,
+		validate: validate,
 	}
 }
 
@@ -55,6 +58,11 @@ func (us *UserServiceImpl) FindById(ctx context.Context, id int) (web.UserRead, 
 }
 
 func (us *UserServiceImpl) Create(ctx context.Context, payload web.UserCreate) (web.UserRead, error) {
+	err := us.validate.ValidateStruct(payload)
+	if err != nil {
+		return web.UserRead{}, err
+	}
+
 	userDomain := domain.User{
 		Username: payload.Username,
 		Email:    payload.Email,
@@ -75,6 +83,11 @@ func (us *UserServiceImpl) Create(ctx context.Context, payload web.UserCreate) (
 }
 
 func (us *UserServiceImpl) Update(ctx context.Context, payload web.UserUpdate, id int) (web.UserRead, error) {
+	err := us.validate.ValidateStruct(payload)
+	if err != nil {
+		return web.UserRead{}, err
+	}
+
 	userDomain := domain.User{
 		Username: payload.Username,
 		Email:    payload.Email,

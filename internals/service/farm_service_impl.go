@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/masrayfa/go-delos-aqua/internals/dependencies"
 	"github.com/masrayfa/go-delos-aqua/internals/helper"
 	"github.com/masrayfa/go-delos-aqua/internals/models/domain"
 	"github.com/masrayfa/go-delos-aqua/internals/models/web"
@@ -13,12 +14,14 @@ import (
 type FarmServiceImpl struct {
 	farmRepository repository.FarmRepository
 	db 		   *pgxpool.Pool
+	validate  *dependencies.Validator
 }
 
-func NewFarmService(farmRepository repository.FarmRepository, db *pgxpool.Pool) FarmService {
+func NewFarmService(farmRepository repository.FarmRepository, db *pgxpool.Pool, validate *dependencies.Validator) FarmService {
 	return &FarmServiceImpl{
 		farmRepository: farmRepository,
 		db: db,
+		validate: validate,
 	}
 }
 
@@ -62,6 +65,11 @@ func (fs *FarmServiceImpl) FindById(ctx context.Context, id int) (web.FarmRead, 
 }
 
 func (fs *FarmServiceImpl) Create(ctx context.Context, payload web.FarmRequest) (web.FarmRead, error) {
+	err := fs.validate.ValidateStruct(payload)
+	if err != nil {
+		return web.FarmRead{}, err
+	}
+
 	farmDomain := domain.Farm{
 		UserId: payload.UserId,
 		Name: payload.Name,
@@ -83,6 +91,11 @@ func (fs *FarmServiceImpl) Create(ctx context.Context, payload web.FarmRequest) 
 }
 
 func (fs *FarmServiceImpl) Update(ctx context.Context, payload web.FarmRequest) (web.FarmRead, error) {
+	err := fs.validate.ValidateStruct(payload)
+	if err != nil {
+		return web.FarmRead{}, err
+	}
+
 	farmDomain := domain.Farm{
 		Name: payload.Name,
 		Location: payload.Location,

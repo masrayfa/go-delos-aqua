@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"encoding/json"
 	"errors"
 	"log"
 	"net/http"
@@ -131,36 +130,18 @@ func (controller *FarmControllerImpl) FindById(writer http.ResponseWriter, reque
 }
 
 func (controller *FarmControllerImpl) Create(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	var farm web.FarmRequest
-	err := json.NewDecoder(request.Body).Decode(&farm)
+	var farmRequest web.FarmRequest
+	err := helper.ReadFromRequestBody(request, &farmRequest)
 	if err != nil {
-		var statusCode int
-
-		switch {
-			case errors.Is(err, helper.ErrNotFound):
-				statusCode = http.StatusNotFound
-			case errors.Is(err, helper.ErrBadRequest):
-				statusCode = http.StatusBadRequest
-			case errors.Is(err, helper.ErrUnathorized):
-				statusCode = http.StatusUnauthorized
-			case errors.Is(err, helper.ErrForbidden):
-				statusCode = http.StatusForbidden
-			case errors.Is(err, helper.ErrConflict):
-				statusCode = http.StatusConflict
-			default:
-				statusCode = http.StatusInternalServerError
-		}
-
 		webResponse := web.Response{
-			Code:    statusCode,
-			Message: http.StatusText(statusCode),
+			Code:    http.StatusBadRequest,
+			Message: "Invalid request payload",
 		}
-
 		helper.WriteToResponseBody(writer, webResponse)
 		return
 	}
 
-	_, err = controller.farmService.Create(request.Context(), farm)
+	_, err = controller.farmService.Create(request.Context(), farmRequest)
 	if err != nil {
 				var statusCode int
 
@@ -191,45 +172,27 @@ func (controller *FarmControllerImpl) Create(writer http.ResponseWriter, request
 	webResponse := web.Response{
 		Code:    http.StatusOK,
 		Message: "Farm created",
-		Data:    farm,
+		Data:    farmRequest,
 	}
 
 	helper.WriteToResponseBody(writer, webResponse)
 }
 
 func (controller *FarmControllerImpl) Update(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	var farm web.FarmRequest
-	err := json.NewDecoder(request.Body).Decode(&farm)
+	var farmRequest web.FarmRequest
+	err := helper.ReadFromRequestBody(request, &farmRequest)
 	if err != nil {
-				var statusCode int
-
-		switch {
-			case errors.Is(err, helper.ErrNotFound):
-				statusCode = http.StatusNotFound
-			case errors.Is(err, helper.ErrBadRequest):
-				statusCode = http.StatusBadRequest
-			case errors.Is(err, helper.ErrUnathorized):
-				statusCode = http.StatusUnauthorized
-			case errors.Is(err, helper.ErrForbidden):
-				statusCode = http.StatusForbidden
-			case errors.Is(err, helper.ErrConflict):
-				statusCode = http.StatusConflict
-			default:
-				statusCode = http.StatusInternalServerError
-		}
-
 		webResponse := web.Response{
-			Code:    statusCode,
-			Message: http.StatusText(statusCode),
+			Code:    http.StatusBadRequest,
+			Message: "Invalid request payload",
 		}
-
 		helper.WriteToResponseBody(writer, webResponse)
 		return
 	}
 
-	_, err = controller.farmService.Update(request.Context(), farm)
+	_, err = controller.farmService.Update(request.Context(), farmRequest)
 	if err != nil {
-				var statusCode int
+		var statusCode int
 
 		switch {
 			case errors.Is(err, helper.ErrNotFound):
@@ -258,7 +221,7 @@ func (controller *FarmControllerImpl) Update(writer http.ResponseWriter, request
 	webResponse := web.Response{
 		Code:    http.StatusOK,
 		Message: "Farm updated",
-		Data:    farm,
+		Data:    farmRequest,
 	}
 
 	helper.WriteToResponseBody(writer, webResponse)

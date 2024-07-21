@@ -106,9 +106,18 @@ func (p *PondsControllerImpl) FindById(writer http.ResponseWriter, request *http
 
 func (p *PondsControllerImpl) Create(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	var pondCreateReq web.PondCreateRequest
-	helper.ReadFromRequestBody(request, &pondCreateReq)
 
-	_, err := p.pondsService.Create(request.Context(), pondCreateReq)
+	err := helper.ReadFromRequestBody(request, &pondCreateReq)
+	if err != nil {
+		webResponse := web.Response{
+			Code:    http.StatusBadRequest,
+			Message: "Invalid request payload",
+		}
+		helper.WriteToResponseBody(writer, webResponse)
+		return
+	}
+
+	_, err = p.pondsService.Create(request.Context(), pondCreateReq)
 	if err != nil {
 		var statusCode int
 		switch {
@@ -141,6 +150,8 @@ func (p *PondsControllerImpl) Create(writer http.ResponseWriter, request *http.R
 }
 
 func (p *PondsControllerImpl) Update(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	log.Println("@PondsControllerImpl.Update")
+
 	param := params.ByName("id")
 	pondId, err := strconv.Atoi(param)
 	if err != nil {
@@ -153,7 +164,15 @@ func (p *PondsControllerImpl) Update(writer http.ResponseWriter, request *http.R
 	}
 
 	var pondUpdateReq web.PondUpdateRequest
-	helper.ReadFromRequestBody(request, &pondUpdateReq)
+	err = helper.ReadFromRequestBody(request, &pondUpdateReq)
+	if err != nil {
+		webResponse := web.Response{
+			Code:    http.StatusBadRequest,
+			Message: "Invalid request payload",
+		}
+		helper.WriteToResponseBody(writer, webResponse)
+		return
+	}
 
 	_, err = p.pondsService.Update(request.Context(), pondUpdateReq, pondId) 
 	if err != nil {

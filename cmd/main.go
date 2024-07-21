@@ -7,6 +7,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/masrayfa/go-delos-aqua/database"
 	"github.com/masrayfa/go-delos-aqua/internals/controller"
+	"github.com/masrayfa/go-delos-aqua/internals/dependencies"
 	"github.com/masrayfa/go-delos-aqua/internals/helper"
 	"github.com/masrayfa/go-delos-aqua/internals/middleware"
 	"github.com/masrayfa/go-delos-aqua/internals/repository"
@@ -14,8 +15,9 @@ import (
 )
 
 func main() {
-
 	dbPool := database.NewDBPool()
+
+	validate := dependencies.NewValidator()
 
 	// repository
 	userRepository := repository.NewUserRepository()
@@ -23,9 +25,9 @@ func main() {
 	pondsRepository := repository.NewPondsRepository()
 
 	// service
-	userService := service.NewUserService(userRepository, dbPool)
-	farmService := service.NewFarmService(farmsRepository, dbPool)
-	pondsService := service.NewPondsService(pondsRepository, dbPool)
+	userService := service.NewUserService(userRepository, dbPool, validate)
+	farmService := service.NewFarmService(farmsRepository, dbPool, validate)
+	pondsService := service.NewPondsService(pondsRepository, dbPool, validate)
 
 	// controller
 	userController := controller.NewUserController(userService)
